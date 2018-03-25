@@ -1,5 +1,10 @@
 {
   "expo": {
     "sdkVersion": "25.0.0"
-  }
+  },
+  "splash": {
+	  "image": "./app/images/icon.png",
+	  "resizeMode": "cover",
+	  "backgroundColor": "#4f6d7a"
+	}
 }
