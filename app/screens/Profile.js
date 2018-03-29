@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import { View, AsyncStorage, Alert } from "react-native";
 import { Card, Button, Text } from "react-native-elements";
-import { onSignOut } from "../config";
+import { SERVER_URL } from "../config";
 import axios from 'axios';
 
 export default class Profile extends Component {
@@ -14,7 +14,7 @@ export default class Profile extends Component {
   componentDidMount () { 
     this._updateList(); 
   } 
-
+ 
   _signOutAsync = async () => {
     await AsyncStorage.clear();
     this.props.navigation.navigate('Auth');

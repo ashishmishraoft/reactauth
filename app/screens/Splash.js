@@ -14,7 +14,7 @@ export default class Splash extends React.Component {
 		return(
 			<View style={styles.container}>
 				<View style={styles.logo}>
-					<Image style={{width: 200, height: 200}} source={require('.././images/icon.png')} />
+					<Image style={{width: 125, height: 125}} source={require('.././images/gaaon.png')} />
 				</View>
 			</View>
 		)
@@ -39,7 +39,7 @@ export default class Splash extends React.Component {
 const styles ={
 	container:{
 		flex: 1,
-		backgroundColor: '#4f6d7a'
+		backgroundColor: '#ffffff'
 	},
 	logo:{
 		alignItems: 'center',
