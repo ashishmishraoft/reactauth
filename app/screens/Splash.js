@@ -1,19 +1,16 @@
-import React,{Component} from 'react';
-import { StyleSheet, View, Text, Image } from "react-native";
-import { onSignIn } from "../auth";
+import React from 'react';
+import { StyleSheet, View, Text, Image, AsyncStorage } from "react-native";
+import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
+import TimerMixin from 'react-timer-mixin';
 
-export default class Splash extends Component {
-	componentDidMount () {
-     	//SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
-        SplashScreen.close({
-            animationType: SplashScreen.animationType.scale,
-            duration: 850,
-            delay: 500,
-        })
-    }
+export default class Splash extends React.Component {
+	constructor() {
+    	super();
+    	this._bootstrapAsync();
+  	}
 
 	render(){
-		const {navigate} = this.props.navigation;
+		const { navigate } = this.props.navigation;
 		return(
 			<View style={styles.container}>
 				<View style={styles.logo}>
@@ -22,6 +19,20 @@ export default class Splash extends Component {
 			</View>
 		)
 	}
+
+	// Fetch the token from storage then navigate to our appropriate place
+	_bootstrapAsync = async () => {
+	    const userToken = await AsyncStorage.getItem('userToken');
+
+	    TimerMixin.setTimeout(
+	      () => { 
+	      	// This will switch to the App screen or Auth screen and this loading
+	    	// screen will be unmounted and thrown away.
+	    	this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+	      },
+	      5000
+	    );
+	 };
 }
 
 

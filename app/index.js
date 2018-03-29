@@ -1,33 +1,30 @@
-import React from "react";
-import {View} from "react-native";
-import { createRootNavigator } from "./router";
-import { isSignedIn } from "./auth";
+import React from 'react';
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  Button,
+  StatusBar,
+  StyleSheet,
+  View
+} from 'react-native';
+import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
+import SignUp from "./screens/SignUp";
+import SignIn from "./screens/SignIn";
+import Home from "./screens/Home";
+import Profile from "./screens/Profile";
+import Splash from "./screens/Splash";
 
-    this.state = {
-      signedIn: false,
-      checkedSignIn: false
-    };
+const AppStack = TabNavigator({ Home: Home, Profile: Profile });
+const AuthStack = StackNavigator({ SignIn: SignIn, SignUp: SignUp });
+
+export default SwitchNavigator(
+  {
+    AuthLoading: Splash,
+    App: AppStack,
+    Auth: AuthStack,
+  },
+  {
+    initialRouteName: 'AuthLoading',
   }
-
-  componentWillMount() {
-    isSignedIn()
-      .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
-      .catch(err => alert("An error occurred"));
-  }
-
-  render() {
-    const { checkedSignIn, signedIn } = this.state;
-
-    // If we haven't checked AsyncStorage yet, don't render anything (better ways to do this)
-    if (!checkedSignIn) {
-      return null;
-    }
-
-    const Layout = createRootNavigator(signedIn);
-    return <Layout />;
-  }
-}
+); 

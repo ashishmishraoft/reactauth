@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, Text, Linking, View } from "react-native";
 import { Card, Button } from "react-native-elements";
+import { onSignOut } from "../config";
 
 const images = [
   {

@@ -1,10 +1,23 @@
-import React,{Component} from "react";
-import { View, Keyboard, AsyncStorage } from "react-native";
+import React from 'react';
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  StatusBar,
+  StyleSheet,
+  View,
+  Keyboard,
+  Alert
+} from 'react-native';
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
-import { onSignIn } from "../auth";
+import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
+import { SERVER_URL } from "../config";
 import axios from 'axios';
 
-export default class SignUp extends Component {
+export default class SignUp extends React.Component {
+
+  static navigationOptions = {
+    title: 'Please sign up',
+  };
   constructor(props){
     super(props)
     this.state={
@@ -30,20 +43,19 @@ export default class SignUp extends Component {
       firstName: firstname,
       lastName: lastname
     };
-    axios.post('http://192.168.42.127:3000/signup',postData,headers)
-    .then((response) => 
+
+    axios.post(SERVER_URL+'signup',postData,headers).then((response) => 
     {
       /*console.log(response);
       console.log(response.headers['x-auth']); */
       if (response.headers['x-auth']) 
       { 
-        AsyncStorage.setItem('authkey', response.headers['x-auth']);
-        this.props.navigation.navigate("SignedIn");
-        onSignIn();
+        AsyncStorage.setItem('userToken', response.headers['x-auth']);
+        this.props.navigation.navigate("App"); 
       }
       else
       {
-        alert('Something went wrong');
+        Alert.alert('Something went wrong');
       } 
     })
     .catch((error) => 

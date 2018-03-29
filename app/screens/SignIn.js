@@ -1,19 +1,29 @@
-import React,{Component} from "react";
-import { View, Keyboard, AsyncStorage } from "react-native";
+import React from 'react';
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  StatusBar,
+  StyleSheet,
+  View,
+  Keyboard,
+  Alert
+} from 'react-native';
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
-import { onSignIn } from "../auth";
+import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
 import axios from 'axios';
+import { onSignOut } from "../config";
+export default class SignIn extends React.Component {
 
-export default class SignIn extends Component {
+  static navigationOptions = {
+    title: 'Please sign in',
+  };
+
   constructor(props){
     super(props)
     this.state={
       email:'',
       password:''
     };
-
-    // need to bind `this` to access props in handler
-    this.onButtonPress = this.onButtonPress.bind(this);
   }
 
   onButtonPress() {
@@ -26,24 +36,22 @@ export default class SignIn extends Component {
       email: email,
       password: password
     };
-    axios.post('http://192.168.42.127:3000/login',postData,headers)
-    .then((response) => {
+    axios.post(SERVER_URL+'login',postData,headers).then((response) => {
       if (response.headers['x-auth']) 
       { 
-        AsyncStorage.setItem('authkey', response.headers['x-auth']);
-        this.props.navigation.navigate("SignedIn");
-        onSignIn();
+        AsyncStorage.setItem('userToken', response.headers['x-auth']);
+        this.props.navigation.navigate("App");
       }
       else
       {
-        alert('Something went wrong');
+        Alert.alert('Something went wrong');
       } 
     })
     .catch((error) => {
         this.setState({error:'Authentication Failed.'});
     });
     Keyboard.dismiss();
-  } 
+  }
 
   render() {
     const {navigate} = this.props.navigation;

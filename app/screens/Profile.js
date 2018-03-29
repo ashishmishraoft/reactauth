@@ -1,7 +1,7 @@
 import React,{Component} from "react";
-import { View, AsyncStorage } from "react-native";
+import { View, AsyncStorage, Alert } from "react-native";
 import { Card, Button, Text } from "react-native-elements";
-import { onSignOut } from "../auth";
+import { onSignOut } from "../config";
 import axios from 'axios';
 
 export default class Profile extends Component {
@@ -15,10 +15,18 @@ export default class Profile extends Component {
     this._updateList(); 
   } 
 
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('Auth');
+  };
+
   async _updateList () { 
-    const authkeys = await AsyncStorage.getItem('authkey');
-    axios.get('http://192.168.42.127:3000/users/me',{ headers: { 'x-auth': authkeys } })
-    .then((response) => 
+    const authkeys = await AsyncStorage.getItem('userToken');
+    if (!authkeys) 
+    {
+      this.props.navigation.navigate('Auth');
+    }
+    axios.get(SERVER_URL+'users/me',{ headers: { 'x-auth': authkeys } }).then((response) => 
     { 
       if (response) 
       {
@@ -30,12 +38,12 @@ export default class Profile extends Component {
       }
       else
       {
-        alert('Something went wrong');
+        Alert.alert('Something went wrong');
       } 
     })
     .catch((error) => 
-    { alert('Something went wrong');
-        /*this.setState({error:'Authentication Failed.'});*/
+    { 
+      Alert.alert('Something went wrong');
     }); 
   }
 
@@ -63,7 +71,7 @@ export default class Profile extends Component {
         <Button
         backgroundColor="#03A9F4"
           title="SIGN OUT"
-          onPress={() => onSignOut().then(() => navigate("SignedOut"))}
+          onPress={this._signOutAsync}
         />
       </Card>
     </View>
