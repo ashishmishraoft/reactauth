@@ -7,12 +7,16 @@ import SignUp from "./screens/SignUp";
 import SignIn from "./screens/SignIn";
 import Home from "./screens/Home";
 import Profile from "./screens/Profile";
+import Splash from "./screens/Splash";
 
 const headerStyle = {
   marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
 };
 
 export const SignedOut = StackNavigator({
+  Splash: {
+    screen: Splash
+  },
   SignUp: {
     screen: SignUp,
     navigationOptions: {

@@ -8,7 +8,7 @@ export default class Profile extends Component {
   constructor(props){
     super(props)
     SampleText : "",
-    this.state={albums: []};
+    this.state={profiles: []};
   }
 
   componentDidMount () { 
@@ -22,9 +22,9 @@ export default class Profile extends Component {
     { 
       if (response) 
       {
-        this.setState({albums: response.data});
-        var String_1 = this.state.albums.firstName ;
-        var String_2 = this.state.albums.lastName ;
+        this.setState({profiles: response.data});
+        var String_1 = this.state.profiles.firstName ;
+        var String_2 = this.state.profiles.lastName ;
         var String_3 = String_1.concat(" " , String_2);
         this.setState({SampleText : String_3});
       }
@@ -58,11 +58,12 @@ export default class Profile extends Component {
             marginBottom: 20
           }}
         >
-          <Text style={{ color: "white", fontSize: 18 }}>{this.state.albums.email}</Text>
+          <Text style={{ color: "white", fontSize: 18 }}>{this.state.profiles.email}</Text>
         </View>
         <Button
-          backgroundColor="#03A9F4"
+        backgroundColor="#03A9F4"
           title="SIGN OUT"
+          onPress={() => onSignOut().then(() => navigate("SignedOut"))}
         />
       </Card>
     </View>

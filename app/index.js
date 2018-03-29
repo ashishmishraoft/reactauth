@@ -1,4 +1,5 @@
 import React from "react";
+import {View} from "react-native";
 import { createRootNavigator } from "./router";
 import { isSignedIn } from "./auth";
 
