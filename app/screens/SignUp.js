@@ -5,8 +5,10 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  Text,
   Keyboard,
-  Alert
+  Alert,
+  KeyboardAvoidingView
 } from 'react-native';
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
@@ -16,7 +18,7 @@ import axios from 'axios';
 export default class SignUp extends React.Component {
 
   static navigationOptions = {
-    title: 'Please sign up',
+    title: 'Sign Up',
   };
   constructor(props){
     super(props)
@@ -24,51 +26,82 @@ export default class SignUp extends React.Component {
       email: '', 
       password:'', 
       firstname:'', 
-      lastname:''
+      lastname:'',
+      error:''
     };
 
     // need to bind `this` to access props in handler
     /*this.onButtonPress = this.onButtonPress.bind(this);*/
   }
 
+
   onButtonPress() {
     const {email, password, firstname, lastname} = this.state;
-    var headers = {
-      'Content-Type': 'application/json',
-    };
 
-    var postData = {
-      email: email,
-      password: password,
-      firstName: firstname,
-      lastName: lastname
-    };
-
-    axios.post(SERVER_URL+'signup',postData,headers).then((response) => 
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+    if(email==""){
+      //alert("Please enter Email address");
+      this.setState({error:'Please enter email address'})
+      
+    }
+    else if(reg.test(email) === false)
     {
-      /*console.log(response);
-      console.log(response.headers['x-auth']); */
-      if (response.headers['x-auth']) 
-      { 
-        AsyncStorage.setItem('userToken', response.headers['x-auth']);
-        this.props.navigation.navigate("App"); 
-      }
-      else
+      this.setState({error:'Email is not correct'})
+      return false;
+    }
+    else if(password=="")
+    {
+    this.setState({error:'Please enter password'})
+    }
+    else if(firstname=="")
+    {
+    this.setState({error:'Please enter firstname'})
+    }
+    else if(lastname=="")
+    {
+    this.setState({error:'Please enter lastname'})
+    }
+    else
+    {
+      var headers = {
+        'Content-Type': 'application/json',
+      };
+
+      var postData = {
+        email: email,
+        password: password,
+        firstName: firstname,
+        lastName: lastname
+      };
+
+      axios.post(SERVER_URL+'signup',postData,headers).then((response) => 
       {
-        Alert.alert('Something went wrong');
-      } 
-    })
-    .catch((error) => 
-    {
-        this.setState({error:'Authentication Failed.'});
-    }); 
-    Keyboard.dismiss();
+        /*console.log(response);
+        console.log(response.headers['x-auth']); */
+        if (response.headers['x-auth']) 
+        { 
+          AsyncStorage.setItem('userToken', response.headers['x-auth']);
+          this.props.navigation.navigate("App"); 
+        }
+        else
+        {
+          Alert.alert('Something went wrong');
+        } 
+      })
+      .catch((error) => 
+      {
+          this.setState({error:'Authentication Failed.'});
+      }); 
+      Keyboard.dismiss();
+    }
   } 
 
   render() {
     const {navigate} = this.props.navigation;
     return (
-      <View style={{ paddingVertical: 20 }}>
+      <KeyboardAvoidingView style={{ paddingVertical: 20,flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center' }}>
         <Card>
           <FormLabel>Email</FormLabel>
           <FormInput 
@@ -95,6 +128,7 @@ export default class SignUp extends React.Component {
             value={this.state.lastname}
             onChangeText={lastname => this.setState({lastname})}
           />
+          <Text style={{margin:10,color:'red'}}>{this.state.error}</Text>
           <Button
             buttonStyle={{ marginTop: 20 }}
             backgroundColor="#03A9F4"
@@ -109,7 +143,8 @@ export default class SignUp extends React.Component {
             onPress={() => navigate("SignIn")}
           />
         </Card>
-      </View>
+        <View style={{ height: 60 }} />
+      </KeyboardAvoidingView>
     );
   }
 }

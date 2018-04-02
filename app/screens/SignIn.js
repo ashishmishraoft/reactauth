@@ -6,57 +6,80 @@ import {
   StyleSheet,
   View,
   Keyboard,
-  Alert
+  Alert,
+  Text,
+  KeyboardAvoidingView
 } from 'react-native';
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { StackNavigator, SwitchNavigator, TabNavigator } from 'react-navigation';
 import axios from 'axios';
-import { onSignOut } from "../config";
+import { SERVER_URL } from "../config";
 export default class SignIn extends React.Component {
 
   static navigationOptions = {
-    title: 'Please sign in',
+    title: 'Sign In',
   };
 
   constructor(props){
     super(props)
     this.state={
       email:'',
-      password:''
+      password:'',
+      error:''
     };
   }
 
   onButtonPress() {
     const {email, password} = this.state;
-    var headers = {
-      'Content-Type': 'application/json',
-    };
 
-    var postData = {
-      email: email,
-      password: password
-    };
-    axios.post(SERVER_URL+'login',postData,headers).then((response) => {
-      if (response.headers['x-auth']) 
-      { 
-        AsyncStorage.setItem('userToken', response.headers['x-auth']);
-        this.props.navigation.navigate("App");
-      }
-      else
-      {
-        Alert.alert('Something went wrong');
-      } 
-    })
-    .catch((error) => {
-        this.setState({error:'Authentication Failed.'});
-    });
-    Keyboard.dismiss();
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+    if(email==""){
+      //alert("Please enter Email address");
+      this.setState({error:'Please enter email address'})
+      
+    }
+    else if(reg.test(email) === false)
+    {
+      this.setState({error:'Email is not correct'})
+      return false;
+    }
+    else if(password=="")
+    {
+    this.setState({error:'Please enter password'})
+    }
+    else
+    {
+      var headers = {
+        'Content-Type': 'application/json',
+      };
+
+      var postData = {
+        email: email,
+        password: password
+      };
+      axios.post(SERVER_URL+'login',postData,headers).then((response) => {
+        if (response.headers['x-auth']) 
+        { 
+          AsyncStorage.setItem('userToken', response.headers['x-auth']);
+          this.props.navigation.navigate("App");
+        }
+        else
+        {
+          Alert.alert('Something went wrong');
+        } 
+      })
+      .catch((error) => {
+          this.setState({error:'Authentication Failed.'});
+      });
+      Keyboard.dismiss();
+    }
+
   }
 
   render() {
     const {navigate} = this.props.navigation;
     return (
-      <View style={{ paddingVertical: 20 }}>
+      <KeyboardAvoidingView style={{ paddingVertical: 20 }}>
         <Card>
           <FormLabel>Email</FormLabel>
           <FormInput 
@@ -71,6 +94,7 @@ export default class SignIn extends React.Component {
             value={this.state.password}
             onChangeText={password => this.setState({password})}
           />
+          <Text style={{margin:10,color:'red'}}>{this.state.error}</Text>
           <Button
             buttonStyle={{ marginTop: 20 }}
             backgroundColor="#03A9F4"
@@ -85,7 +109,7 @@ export default class SignIn extends React.Component {
             onPress={() => navigate("SignUp")}
           />
         </Card>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
