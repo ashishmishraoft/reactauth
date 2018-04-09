@@ -1,10 +1,11 @@
 {
     "expo": {
-	    "name": "Auth App",
+	    "name": "Auth Project",
 	    "icon": "./app/images/icon.png",
-	    "version": "1.0.0",
-	    "slug": "Auth App",
+	    "version": "1.0.1",
+	    "slug": "authproject",
 	    "sdkVersion": "25.0.0",
+	    "privacy": "unlisted",
 	    "android": {
 	      "package": "com.gaaon.gaaon"
 	    }
